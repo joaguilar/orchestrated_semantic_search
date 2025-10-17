@@ -1,0 +1,13 @@
+promptflow
+promptflow-tools
+semantic-kernel
+azure-ai-agents
+azure-ai-projects
+openai
+openapi_core
+jinja2
+azure-ai-inference
+azure-search-documents
+mcp
+ipykernel
+pandas
