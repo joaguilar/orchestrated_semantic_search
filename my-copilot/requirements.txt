@@ -2,4 +2,4 @@ promptflow
 elasticsearch
 openai
 semantic-kernel
-azure-identity>
+azure-identity

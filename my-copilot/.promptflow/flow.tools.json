@@ -1,10 +1,134 @@
 {
-  "package": {},
+  "package": {
+    "promptflow.tools.serpapi.SerpAPI.search": {
+      "name": "Serp API",
+      "description": "Use Serp API to obtain search results from a specific search engine.",
+      "inputs": {
+        "connection": {
+          "type": [
+            "SerpConnection"
+          ]
+        },
+        "engine": {
+          "default": "google",
+          "enum": [
+            "google",
+            "bing"
+          ],
+          "type": [
+            "string"
+          ]
+        },
+        "location": {
+          "default": "",
+          "type": [
+            "string"
+          ]
+        },
+        "num": {
+          "default": "10",
+          "type": [
+            "int"
+          ]
+        },
+        "query": {
+          "type": [
+            "string"
+          ]
+        },
+        "safe": {
+          "default": "off",
+          "enum": [
+            "active",
+            "off"
+          ],
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "type": "python",
+      "module": "promptflow.tools.serpapi",
+      "class_name": "SerpAPI",
+      "function": "search",
+      "package": "promptflow-tools",
+      "package_version": "1.6.1"
+    },
+    "promptflow.tools.embedding.embedding": {
+      "name": "Embedding",
+      "description": "Use Open AI's embedding model to create an embedding vector representing the input text.",
+      "type": "python",
+      "module": "promptflow.tools.embedding",
+      "function": "embedding",
+      "inputs": {
+        "connection": {
+          "type": [
+            "AzureOpenAIConnection",
+            "OpenAIConnection",
+            "ServerlessConnection"
+          ]
+        },
+        "deployment_name": {
+          "type": [
+            "string"
+          ],
+          "enabled_by": "connection",
+          "enabled_by_type": [
+            "AzureOpenAIConnection"
+          ],
+          "capabilities": {
+            "completion": false,
+            "chat_completion": false,
+            "embeddings": true
+          },
+          "model_list": [
+            "text-embedding-ada-002",
+            "text-search-ada-doc-001",
+            "text-search-ada-query-001"
+          ]
+        },
+        "model": {
+          "type": [
+            "string"
+          ],
+          "enabled_by": "connection",
+          "enabled_by_type": [
+            "OpenAIConnection"
+          ],
+          "enum": [
+            "text-embedding-ada-002",
+            "text-search-ada-doc-001",
+            "text-search-ada-query-001"
+          ],
+          "allow_manual_entry": true
+        },
+        "input": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "package": "promptflow-tools",
+      "package_version": "1.6.1"
+    }
+  },
   "code": {
+    "semantic_search_planner.py": {
+      "type": "python",
+      "inputs": {
+        "input1": {
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "source": "semantic_search_planner.py",
+      "function": "my_python_tool"
+    },
     "chat.jinja2": {
       "type": "llm",
       "inputs": {
-        "chat_history": {
+        "search_results": {
           "type": [
             "string"
           ]
@@ -13,9 +137,94 @@
           "type": [
             "string"
           ]
+        },
+        "chat_history": {
+          "type": [
+            "string"
+          ]
         }
       },
       "source": "chat.jinja2"
+    },
+    "sk_search.py": {
+      "type": "python",
+      "inputs": {
+        "question": {
+          "type": [
+            "string"
+          ]
+        },
+        "connection": {
+          "type": [
+            "AzureOpenAIConnection"
+          ]
+        },
+        "elasticsearch_host": {
+          "type": [
+            "string"
+          ],
+          "default": "localhost"
+        },
+        "elasticsearch_port": {
+          "type": [
+            "int"
+          ],
+          "default": "9200"
+        },
+        "elasticsearch_username": {
+          "type": [
+            "string"
+          ]
+        },
+        "elasticsearch_password": {
+          "type": [
+            "string"
+          ]
+        },
+        "elasticsearch_api_key": {
+          "type": [
+            "string"
+          ]
+        },
+        "use_ssl": {
+          "type": [
+            "bool"
+          ],
+          "default": "False"
+        },
+        "index_name": {
+          "type": [
+            "string"
+          ],
+          "default": "documents"
+        },
+        "vector_field": {
+          "type": [
+            "string"
+          ],
+          "default": "vector"
+        },
+        "text_fields": {
+          "type": [
+            "string"
+          ],
+          "default": "content"
+        },
+        "search_type": {
+          "type": [
+            "string"
+          ],
+          "default": "semantic"
+        },
+        "emmbedding": {
+          "type": [
+            "list"
+          ]
+        }
+      },
+      "description": "Perform semantic search using Elasticsearch and Azure OpenAI.\n\nArgs:\n    question: The user's question/query\n    connection: Azure OpenAI connection from PromptFlow\n    elasticsearch_host: Elasticsearch server host\n    elasticsearch_port: Elasticsearch server port  \n    elasticsearch_username: Username for basic auth (optional)\n    elasticsearch_password: Password for basic auth (optional)\n    elasticsearch_api_key: API key for authentication (optional)\n    use_ssl: Whether to use SSL connection\n    index_name: Name of the Elasticsearch index\n    vector_field: Name of the vector field in documents\n    text_fields: Comma-separated list of text fields to return\n    search_type: Type of search ('semantic', 'hybrid', or 'index_info')\n\nReturns:\n    JSON string with search results or response",
+      "source": "sk_search.py",
+      "function": "semantic_search"
     }
   }
 }

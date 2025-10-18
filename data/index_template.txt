@@ -1,0 +1,43 @@
+# Create (or update) the index template
+curl -X PUT "http://localhost:9200/_index_template/docs-template" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "index_patterns": ["docs-*"],
+    "template": {
+      "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0
+      },
+      "mappings": {
+        "properties": {
+          "title": {
+            "type": "text",
+            "fields": {
+              "keyword": { "type": "keyword", "ignore_above": 256 }
+            }
+          },
+          "content": { "type": "text" },
+          "vector": {
+            "type": "dense_vector",
+            "dims": 1536,
+            "index": true,
+            "similarity": "cosine"
+          }
+        }
+      },
+      "aliases": {
+        "documents": {}
+      }
+    },
+    "priority": 500
+  }'
+
+
+# Create the first concrete index (inherits the alias & mappings from the template)
+curl -X PUT "http://localhost:9200/docs-1"
+
+# (Optional) Verify alias points to docs-1
+curl "http://localhost:9200/_alias/documents?pretty"
+
+#Tests:
+curl -X POST "http://localhost:9200/documents/_search?pretty" -d '{"_source":["title"]}' -H "Content-Type: application/json"

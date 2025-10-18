@@ -9,12 +9,71 @@ inputs:
   question:
     type: string
     is_chat_input: true
+    default: ${inputs.question}
+  elasticsearch_host:
+    type: string
+    default: localhost
+  elasticsearch_port:
+    type: int
+    default: 9200
+  elasticsearch_username:
+    type: string
+    default: ""
+  elasticsearch_password:
+    type: string
+    default: ""
+  elasticsearch_api_key:
+    type: string
+    default: ""
+  use_ssl:
+    type: bool
+    default: false
+  index_name:
+    type: string
+    default: documents
+  vector_field:
+    type: string
+    default: vector
+  text_fields:
+    type: string
+    default: content
+  search_type:
+    type: string
+    default: semantic
 outputs:
   answer:
     type: string
     reference: ${chat.output}
     is_chat_output: true
 nodes:
+- name: create_embedding
+  type: python
+  source:
+    type: package
+    tool: promptflow.tools.embedding.embedding
+  inputs:
+    connection: open_ai_connection
+    deployment_name: text-embedding-3-small
+    input: ${inputs.question}
+- name: semantic_search
+  type: python
+  source:
+    type: code
+    path: sk_search.py
+  inputs:
+    connection: open_ai_connection
+    question: ${inputs.question}
+    elasticsearch_host: localhost
+    elasticsearch_port: 9200
+    elasticsearch_username: '""'
+    elasticsearch_password: '""'
+    elasticsearch_api_key: '""'
+    use_ssl: false
+    index_name: documents
+    vector_field: vector
+    text_fields: content
+    search_type: semantic
+    emmbedding: ${create_embedding.output}
 - name: chat
   type: llm
   source:
@@ -24,5 +83,6 @@ nodes:
     deployment_name: gpt-5-nano
     chat_history: ${inputs.chat_history}
     question: ${inputs.question}
+    search_results: ${semantic_search.output}
   connection: open_ai_connection
   api: chat
