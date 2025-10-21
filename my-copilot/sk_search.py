@@ -84,6 +84,7 @@ def semantic_search(
         try:
             
             print("Initializing Semantic Kernel and Elasticsearch Plugin...")
+            print(f"Question: {question}")
             
             # Initialize Semantic Kernel
             kernel = sk.Kernel()
@@ -151,7 +152,6 @@ def semantic_search(
             function = kernel.get_function(plugin_name, func_name)
             result = await function.invoke(kernel, arguments)
             print("Search completed successfully.")
-            print(f"Search results: {result}")
             return str(result)
             
         except Exception as e:
